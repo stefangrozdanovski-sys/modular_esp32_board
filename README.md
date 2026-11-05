@@ -68,12 +68,25 @@ Part names per port (n = port number, 7 = UART, 8 = I2C): Rn01 RA series, Rn02 R
 
 ## Firmware
 
-ESPHome packages (one per port job) and example configs are coming in `firmware/`. Until then, the bring-up test config is on page 13 of the assembly guide (`board: esp32dev`).
+ESPHome packages in [`firmware/`](firmware/README.md): one package per port job (relay, dry contact, DS18B20, NTC, analog, pulse flow, PZEM-004T, RS485 Modbus, I2C + BME280, OUT PWM / switch), a common `base.yaml` with the board pins as substitutions, and three examples (`test-board`, `energy-relay`, `greenhouse`).
+
+Pick the job, fit the parts from the recipe above, then include the package with the port pin:
+
+```yaml
+packages:
+  base: !include ../base.yaml
+  pump_p1: !include
+    file: ../packages/relay.yaml
+    vars: {id: pump_p1, name: Pump, pin: "${p1_a}"}
+```
+
+Every example passes `esphome config` on ESPHome 2026.10.2 (ESP-IDF framework). Not yet run on a built board. New board: flash `firmware/examples/test-board.yaml` first (assembly guide page 13).
 
 ## Repository
 
 | Folder | Contents |
 |---|---|
+| `firmware/` | ESPHome packages and example configs. See [firmware/README.md](firmware/README.md) |
 | `hardware/` | KiCad 7 project, custom footprint library, generator scripts (`tools/`), BOM (`bom/`), docs and Gerbers. See [hardware/README.md](hardware/README.md) |
 | `LICENSES/` | Licence texts |
 

@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# PZEM-004T v3 energy meter on the UART port.
+# Pins:  UART port only (TX ${uart_tx}, RX ${uart_rx} via 10k/22k divider).
+#        One UART job per board: do not combine with rs485_modbus.
+# Fit:   defaults, VP 5V. Cable: GND-GND, 5V-5V, board TX -> PZEM RX,
+#        board RX <- PZEM TX. The PZEM stays in the mains section of the box.
+# Vars:  id, name (prefix for the entities)
+#        address          1 (default, factory address)
+#        update_interval  10s (default)
+#        tx_pin, rx_pin   UART pins (default ${uart_tx}/${uart_rx})
+#
+#   pzem: !include
+#     file: ../packages/pzem.yaml
+#     vars: {id: pzem, name: Mains}
+
+defaults:
+  address: "1"
+  update_interval: 10s
+  tx_pin: ${uart_tx}
+  rx_pin: ${uart_rx}
+
+uart:
+  - id: ${id}_uart
+    tx_pin: "${tx_pin}"
+    rx_pin: "${rx_pin}"
+    baud_rate: 9600
+
+modbus:
+  - id: ${id}_modbus
+    uart_id: ${id}_uart
+
+sensor:
+  - platform: pzemac
+    id: ${id}
+    modbus_id: ${id}_modbus
+    address: ${address}
+    update_interval: ${update_interval}
+    voltage:
+      id: ${id}_voltage
+      name: ${name} voltage
+    current:
+      id: ${id}_current
+      name: ${name} current
+    power:
+      id: ${id}_power
+      name: ${name} power
+    energy:
+      id: ${id}_energy
+      name: ${name} energy
+    frequency:
+      id: ${id}_frequency
+      name: ${name} frequency
+    power_factor:
+      id: ${id}_pf
+      name: ${name} power factor

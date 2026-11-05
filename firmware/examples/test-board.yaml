@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# Bring-up test config, assembly guide page 13. Stand-alone: no secrets, no
+# base.yaml. Flash over USB:  esphome run test-board.yaml  (pick the CH340 port).
+# Connect to the AP "modbase-test", open http://192.168.4.1 and work through
+# the checks on page 13. ESPHome warns that GPIO0 and GPIO2 are strapping
+# pins: expected, they are the BOOT button and the status LED.
+
+esphome:
+  name: modbase-test
+
+esp32:
+  board: esp32dev
+
+logger:
+
+wifi:
+  ap:
+    ssid: "modbase-test"
+
+captive_portal:
+
+web_server:
+  port: 80
+
+status_led:
+  pin: GPIO2
+
+binary_sensor:
+  - platform: gpio
+    name: "BOOT button"
+    pin: {number: GPIO0, inverted: true}
+
+switch:
+  - {platform: gpio, name: "P1 A", pin: GPIO25}
+  - {platform: gpio, name: "P2 A", pin: GPIO26}
+  - {platform: gpio, name: "P3 A", pin: GPIO27}
+  - {platform: gpio, name: "P4 A", pin: GPIO13}
+  - {platform: gpio, name: "P5 A", pin: GPIO4}
+  - {platform: gpio, name: "P6 A", pin: GPIO18}
+  - {platform: gpio, name: "UART TX", pin: GPIO17}
+  - {platform: gpio, name: "OUT", pin: GPIO23}

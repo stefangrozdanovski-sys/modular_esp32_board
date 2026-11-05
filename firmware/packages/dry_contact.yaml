@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# Button or dry contact between port A and GND.
+# Pins:  A only (P1-P6: ${p1_a} ... ${p6_a}). B has no usable internal pull-up.
+# Fit:   nothing (internal pull-up). Long cable: RAU 10k.
+# Vars:  id, name, pin
+#        device_class  "" (default), door, window, motion, ...
+#        debounce      50ms (default)
+#
+#   door_p2: !include
+#     file: ../packages/dry_contact.yaml
+#     vars: {id: door_p2, name: Door, pin: "${p2_a}", device_class: door}
+
+defaults:
+  device_class: ""
+  debounce: 50ms
+
+binary_sensor:
+  - platform: gpio
+    id: ${id}
+    name: ${name}
+    device_class: ${device_class}
+    pin:
+      number: ${pin}
+      mode:
+        input: true
+        pullup: true
+      inverted: true  # contact closed = ON
+    filters:
+      - delayed_on_off: ${debounce}

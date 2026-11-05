@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# OUT as a PWM fan (12/24 V DC fan, 2-wire).
+# Pins:  OUT only (${out_pin} -> AO3400A, gate pulled down: off at boot).
+#        About 2 A / 24 V. SS34 flyback is fitted.
+# Fit:   defaults. Load between V+ and OUT, supply negative to GND.
+# Vars:  id, name
+#        frequency  1000Hz (default). Lower if the fan whines or stalls.
+#        min_power  "0.0" (default). Set the lowest duty the fan still turns
+#                   at (e.g. "0.3"); off stays off (zero_means_zero).
+#        pin        ${out_pin} (default)
+# The ledc output is "${id}_pwm". For a dimmable LED strip use it with
+# light: monochromatic instead of this fan.
+#
+#   fan: !include
+#     file: ../packages/out_pwm.yaml
+#     vars: {id: vent_fan, name: Vent fan, min_power: "0.3"}
+
+defaults:
+  frequency: 1000Hz
+  min_power: "0.0"
+  pin: ${out_pin}
+
+output:
+  - platform: ledc
+    id: ${id}_pwm
+    pin: "${pin}"
+    frequency: ${frequency}
+    min_power: ${min_power}
+    zero_means_zero: true
+
+fan:
+  - platform: speed
+    id: ${id}
+    name: ${name}
+    output: ${id}_pwm
+    restore_mode: ALWAYS_OFF

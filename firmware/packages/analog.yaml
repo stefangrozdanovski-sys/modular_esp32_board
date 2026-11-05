@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# 0-3.3 V analog input on port B.
+# Pins:  B (P1-P6: ${p1_b} ... ${p6_b}), all are ADC1. Max 3.3 V at the pin.
+# Fit:   CB 100nF. Signal above 3.3 V: use a divider (RB/RBD) and set "scale".
+# Vars:  id, name, pin
+#        scale            1.0 (default): reading in V is multiplied by this
+#        unit             V (default)
+#        update_interval  10s (default)
+#
+#   level_p3: !include
+#     file: ../packages/analog.yaml
+#     vars: {id: level_p3, name: Level, pin: "${p3_b}"}
+
+defaults:
+  scale: "1.0"
+  unit: V
+  update_interval: 10s
+
+sensor:
+  - platform: adc
+    id: ${id}
+    name: ${name}
+    pin: "${pin}"
+    attenuation: 12db
+    unit_of_measurement: ${unit}
+    update_interval: ${update_interval}
+    filters:
+      - multiply: ${scale}

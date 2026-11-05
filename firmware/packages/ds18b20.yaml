@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# DS18B20 1-Wire temperature sensor on port A.
+# Pins:  A only (P1-P6: ${p1_a} ... ${p6_a}). VP 3V3.
+# Fit:   RAU 4.7k.
+# Vars:  id, name, pin
+#        update_interval  60s (default)
+# Creates the bus "${id}_bus" and one sensor "${id}". With one sensor on the
+# bus no address is needed. For more sensors on the same port, add them in
+# your device config with one_wire_id: <id>_bus and their address (the log
+# lists the addresses found at boot).
+#
+#   temp_p4: !include
+#     file: ../packages/ds18b20.yaml
+#     vars: {id: temp_p4, name: Soil temperature, pin: "${p4_a}"}
+
+defaults:
+  update_interval: 60s
+
+one_wire:
+  - platform: gpio
+    id: ${id}_bus
+    pin: "${pin}"
+
+sensor:
+  - platform: dallas_temp
+    id: ${id}
+    name: ${name}
+    one_wire_id: ${id}_bus
+    resolution: 12
+    update_interval: ${update_interval}

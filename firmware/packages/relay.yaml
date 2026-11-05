@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# Relay module on a port A pin.
+# Pins:  A only (P1-P6: ${p1_a} ... ${p6_a}). Never B (P1-P4 B are input-only).
+# Fit:   low-trigger module: defaults. High-trigger module: RAD 10k, inverted "false".
+# Vars:  id, name, pin
+#        inverted     "true" = low-trigger module (default), "false" = high-trigger
+#        restore_mode ALWAYS_OFF (default), RESTORE_DEFAULT_OFF, ...
+#
+#   relay_p1: !include
+#     file: ../packages/relay.yaml
+#     vars: {id: relay_p1, name: Relay, pin: "${p1_a}"}
+
+defaults:
+  inverted: "true"
+  restore_mode: ALWAYS_OFF
+
+switch:
+  - platform: gpio
+    id: ${id}
+    name: ${name}
+    restore_mode: ${restore_mode}
+    pin:
+      number: ${pin}
+      inverted: ${inverted}

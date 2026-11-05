@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# RS485 module (MAX485 style) as a Modbus RTU master on the UART port.
+# Pins:  UART port (TX ${uart_tx}, RX ${uart_rx}) + DE/RE on P5 B (${p5_b})
+#        or P6 B (${p6_b}). P1-P4 B are input-only: never DE/RE.
+#        One UART job per board: do not combine with pzem.
+# Fit:   VP 5V. 3.3 V module: remove R706 (RX divider bottom).
+#        Auto-direction modules have no DE/RE pin: this package does not fit
+#        them. Use uart + modbus without flow_control_pin directly.
+# Vars:  id (the modbus_controller id), de_pin
+#        address          1 (default, slave address)
+#        baud_rate        9600 (default)
+#        parity           NONE (default), EVEN, ODD
+#        update_interval  30s (default)
+#        tx_pin, rx_pin   UART pins (default ${uart_tx}/${uart_rx})
+# Add registers in your device config:
+#   sensor:
+#     - platform: modbus_controller
+#       modbus_controller_id: <id>
+#       name: Inlet temperature
+#       address: 0x0001
+#       register_type: holding
+#       value_type: S_WORD
+#
+#   rs485: !include
+#     file: ../packages/rs485_modbus.yaml
+#     vars: {id: heatpump, de_pin: "${p5_b}", address: "1"}
+
+defaults:
+  address: "1"
+  baud_rate: "9600"
+  parity: NONE
+  update_interval: 30s
+  tx_pin: ${uart_tx}
+  rx_pin: ${uart_rx}
+
+uart:
+  - id: ${id}_uart
+    tx_pin: "${tx_pin}"
+    rx_pin: "${rx_pin}"
+    baud_rate: ${baud_rate}
+    parity: ${parity}
+    stop_bits: 1
+
+modbus:
+  - id: ${id}_modbus
+    uart_id: ${id}_uart
+    flow_control_pin: "${de_pin}"
+
+modbus_controller:
+  - id: ${id}
+    modbus_id: ${id}_modbus
+    address: ${address}
+    update_interval: ${update_interval}

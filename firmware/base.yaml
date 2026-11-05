@@ -1,0 +1,96 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# ESP32 Modular Base v2.0 - common board config.
+# Include it first, from every device config:
+#
+#   substitutions:
+#     device_name: my-device          # hostname: lowercase, digits, "-"
+#     friendly_name: My device
+#   packages:
+#     base: !include ../base.yaml
+#
+# Needs firmware/secrets.yaml, next to this file (copy secrets.example.yaml).
+# Framework: ESP-IDF (ESPHome default). No package here needs Arduino.
+
+substitutions:
+  # Port pins (connector: 1 GND, 2 VP, 3 A, 4 B). A has 330R in series, B has 1k.
+  p1_a: GPIO25
+  p1_b: GPIO36  # input-only, no internal pull-up, never pulse_counter (errata)
+  p2_a: GPIO26
+  p2_b: GPIO39  # input-only, no internal pull-up, never pulse_counter (errata)
+  p3_a: GPIO27
+  p3_b: GPIO34  # input-only, ADC1
+  p4_a: GPIO13
+  p4_b: GPIO35  # input-only, ADC1
+  p5_a: GPIO4
+  p5_b: GPIO32  # bidirectional, ADC1
+  p6_a: GPIO18
+  p6_b: GPIO33  # bidirectional, ADC1
+  uart_tx: GPIO17
+  uart_rx: GPIO16  # through 10k/22k divider, 5 V safe
+  i2c_sda: GPIO21  # 4.7k pull-ups fitted
+  i2c_scl: GPIO22
+  out_pin: GPIO23  # AO3400A low-side switch, off at boot
+  # Spare header J902 (not fitted). GPIO5/GPIO14 output PWM at boot: inputs only.
+  spare_19: GPIO19
+  spare_14: GPIO14
+  spare_5: GPIO5
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  min_version: 2026.10.2
+
+esp32:
+  board: esp32dev
+  flash_size: 4MB
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_key
+
+ota:
+  - platform: esphome
+    encryption:  # reuses the api key, no separate OTA password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: ${device_name}
+
+captive_portal:
+
+status_led:
+  pin:
+    number: GPIO2
+    ignore_strapping_warning: true  # GPIO2 is the status LED, active high
+
+binary_sensor:
+  - platform: gpio
+    id: boot_button
+    name: BOOT button
+    pin:
+      number: GPIO0
+      inverted: true  # active low, 10k external pull-up
+      ignore_strapping_warning: true
+    filters:
+      - delayed_on_off: 50ms
+    entity_category: diagnostic
+
+button:
+  - platform: restart
+    id: restart_button
+    name: Restart
+
+sensor:
+  - platform: wifi_signal
+    id: wifi_rssi
+    name: Wi-Fi signal
+    update_interval: 60s
+  - platform: uptime
+    id: uptime_s
+    name: Uptime

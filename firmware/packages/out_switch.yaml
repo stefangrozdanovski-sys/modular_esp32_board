@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# OUT as an on/off switch (DC-input SSR, 12/24 V LED, buzzer, valve, contactor coil).
+# Pins:  OUT only (${out_pin} -> AO3400A, gate pulled down: off at boot).
+#        About 2 A / 24 V. SS34 flyback is fitted.
+# Fit:   defaults. Load between V+ and OUT, supply negative to GND.
+# Vars:  id, name
+#        restore_mode  ALWAYS_OFF (default)
+#        pin           ${out_pin} (default)
+#
+#   out: !include
+#     file: ../packages/out_switch.yaml
+#     vars: {id: valve, name: Valve}
+
+defaults:
+  restore_mode: ALWAYS_OFF
+  pin: ${out_pin}
+
+switch:
+  - platform: gpio
+    id: ${id}
+    name: ${name}
+    restore_mode: ${restore_mode}
+    pin: "${pin}"
