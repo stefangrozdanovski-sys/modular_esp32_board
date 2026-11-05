@@ -1,8 +1,17 @@
 # Modular ESP32 board (ESP32 Modular Base v2.0)
 
-An open-hardware ESP32 carrier for Home Assistant / ESPHome. It has 8 identical 4-pin ports, and you fit a few resistors per port to match the job: relay, NTC, DS18B20, flow sensor, PZEM-004T energy meter, RS485 Modbus, I2C sensors, switched 12–24 V output.
+An open-hardware ESP32 carrier for Home Assistant / ESPHome. It has 8 JST XH 4-pin ports:
 
-> **Status: v2.0 PCBs ordered (2026-10-14), not yet built or tested.**
+- **P1–P6**: general ports, each with a digital pin **A** and an input/analog pin **B**
+- **UART**: 5 V serial port for meters and RS485 modules
+- **I2C**: sensor bus with pull-ups fitted
+
+There is also a switched output (**OUT**) for 12–24 V loads. Every general port has the same set of empty resistor footprints; you fit a few to match the job:
+
+- **Generic jobs:** relays, buttons and dry contacts, temperature probes, 0–3.3 V analog signals, pulse and flow meters, energy meters, RS485 Modbus devices, I2C sensors and displays, 12–24 V loads (SSR, LED strip, fan, buzzer)
+- **Popular parts:** 1–8 channel relay modules, DS18B20, NTC 10 k thermistors, YF-S201 / YF-B flow sensors, PZEM-004T v3, MAX485 modules, BME280, SHT3x / SHT4x, BH1750, ADS1115, SSD1306 OLED, capacitive soil moisture sensors
+
+> **Status: v2.0 PCBs received from Seeed Studio (2026-11-05), not yet built or tested.**
 > The picture below is rendered from the Gerbers, not a photo. Real photos and a test report will be added after bring-up.
 
 ![PCB render, top](hardware/docs/board_top.png)
@@ -11,10 +20,11 @@ An open-hardware ESP32 carrier for Home Assistant / ESPHome. It has 8 identical 
 
 - Ai-Thinker ESP-32S / ESP32-WROOM-32 module, USB (CH340C) with auto-reset, BOOT/RESET buttons, status LED
 - 75 × 65 mm, 2 layers, hand-solderable (0805, 1206, SOT-23/223, SOIC-16, THT)
+- Also suitable for machine assembly: standard SMD packages, assembly files for JLCPCB / PCBWay in `production/pcba/` (in progress)
 - 6 general ports P1–P6 (G, VP, A, B), UART port (5 V, RX divider for 5 V devices), I2C port (pull-ups fitted)
 - OUT: low-side MOSFET switch with flyback diode, about 2 A / 24 V, PWM-capable
 - Per port: VP jumper (3.3 V / 5 V), 0.5 A PTC, series resistors, empty footprints for pull-ups, pull-downs, divider and filter
-- **Low voltage only.** No mains on the PCB. Mains devices (e.g. PZEM-004T) stay in their own enclosure section behind a divider. Flash and probe the board with mains disconnected.
+- **Low voltage only.** No mains on the PCB. Mains devices (e.g. PZEM-004T, relay boards) stay in their own enclosure section behind a divider. Flash and probe the board with mains disconnected.
 
 ## Pin map
 
