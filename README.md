@@ -97,8 +97,6 @@ Every example passes `esphome config` on ESPHome 2026.10.2 (ESP-IDF framework). 
 - [ ] **PCBA:** confirm every part's rotation and pin 1 in JLCPCB's placement preview before any assembled order (see [`production/pcba/README.md`](production/pcba/README.md)).
 - [ ] **Flow sensors:** set `pulses_per_litre` for each flow sensor model used. One board set can use different models, so set it per sensor (typical values in [`firmware/README.md`](firmware/README.md#flow-sensor-factors)).
 - [ ] **Device sets:** the examples are starting points. Write one device config per board set (which devices on which ports), named after the board (e.g. `b1-boiler.yaml`).
-- [ ] **Build and test:** hand-solder the 5 v2.0 PCBs from Seeed Studio (B1–B5) with the assembly guide, then run its test pages on each board.
-- [ ] **Release:** after the build, add real photos (`docs/photos/`) and a test report (`docs/test-report-v2.0.md`), update the status line, then release v2.0.0.
 
 ## Repository
 
