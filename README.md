@@ -92,7 +92,7 @@ packages:
 
 Every example passes `esphome config` on ESPHome 2026.10.2 (ESP-IDF framework). Not yet run on a built board. New board: flash `firmware/examples/test-board.yaml` first (assembly guide page 13).
 
-## Open items
+## Setup notes
 
 - [ ] **PCBA:** confirm every part's rotation and pin 1 in JLCPCB's placement preview before any assembled order (see [`production/pcba/README.md`](production/pcba/README.md)).
 - [ ] **Flow sensors:** set `pulses_per_litre` for each flow sensor model used. One board set can use different models, so set it per sensor (typical values in [`firmware/README.md`](firmware/README.md#flow-sensor-factors)).
