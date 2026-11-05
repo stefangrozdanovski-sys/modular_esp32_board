@@ -91,6 +91,20 @@ Full parts list per job: "Port recipes" in the [main README](../README.md#port-r
 - **OUT:** low-side switch. Load between V+ and OUT, supply negative to GND. For a dimmable LED strip, use `out_pwm.yaml`'s output (`<id>_pwm`) with `light: monochromatic`, or copy the `output:` block.
 - **I2C:** include `i2c.yaml` once, then the sensor packages. Two BME280s need different addresses (0x76 / 0x77).
 
+### Flow sensor factors
+
+Hall flow sensors output F (Hz) = k × Q (L/min), so `pulses_per_litre` = 60 × k. Set it per sensor: each `pulse_flow` instance has its own `pulses_per_litre`, so one board can mix models.
+
+| Sensor | k (typical) | `pulses_per_litre` |
+|---|---|---|
+| YF-S201 (1/2") | 7.5 | 450 |
+| YF-B1 (1/2" brass) | 11 | 660 |
+| FS300A (3/4") | 5.5 | 330 |
+| FS400A (1") | 4.8 | 288 |
+| YF-S401 (small, 1–5 L/min) | 98 | 5880 |
+
+These are typical values from seller datasheets, and units vary between batches. Use your sensor's datasheet, then calibrate: run a known volume (e.g. 10 L into a bucket) and set `pulses_per_litre` = counted pulses ÷ litres.
+
 ## Examples
 
 | File | What | Ports used |
