@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
 # PCBA files (JLCPCB / PCBWay)
 
-> **Not ready to order yet.** Only CH340C (C84681) was checked live. Every other LCSC number below is an unverified candidate. The rotation corrections have not been checked in JLCPCB's placement preview. Do both before you pay.
+> **Before you pay:** all 24 LCSC numbers were checked on JLCPCB on 2026-11-05 (stock changes daily, so recheck it). The rotation corrections are **not** confirmed: check them in JLCPCB's placement preview.
 
 | File | Use |
 |---|---|
@@ -26,42 +26,42 @@ PCBWay: upload the Gerbers and the PCBWay BOM and CPL. PCBWay sources the parts 
 
 ## Module choice: ESP32-WROOM-32E-N4 (C701341)
 
-The hand-build BOM uses the Ai-Thinker ESP-32S. A web search found no LCSC/JLCPCB listing for it. The ESP32-WROOM-32E-N4 is Espressif's current module and has the same 18 × 25.5 mm, 38-pad layout. Its flash pins (pads 17–22) are not connected on this board, so it is a drop-in. It also has 4 MB flash, and `board: esp32dev` works. Its JLCPCB class is reported as Extended, which adds the extended-part fee.
+The hand-build BOM uses the Ai-Thinker ESP-32S. A web search found no LCSC/JLCPCB listing for it. The ESP32-WROOM-32E-N4 is Espressif's current module and has the same 18 × 25.5 mm, 38-pad layout. Its flash pins (pads 17–22) are not connected on this board, so it is a drop-in. It also has 4 MB flash, and `board: esp32dev` works. It is an Extended part (checked 2026-11-05), which adds the extended-part fee.
 
 ## LCSC verification
 
-Checked = looked up live on jlcpcb.com / lcsc.com. Everything else is a **candidate**: the number came from my memory or a web search snippet, and package, value, stock and Basic/Extended status have not been confirmed.
+Every number was looked up on JLCPCB's part API on 2026-11-05. Model, maker, value and package matched each line, and every part was in stock. 6 lines are Extended parts (module, CH340C, USBLC6, SMAJ5.0A, both PTCs); each one adds JLCPCB's extended-part fee per order.
 
 | Line | Refs | LCSC | MPN | Package / value | Stock | Basic/Ext | Status |
 |---|---|---|---|---|---|---|---|
-| CH340C | U3 | C84681 | WCH CH340C | SOP-16 | 101,694 (JLCPCB), 100,341 (LCSC) | Extended | **Checked 2026-11-05**, JLCPCB part API + lcsc.com page |
-| Module | U1 | C701341 | ESP32-WROOM-32E-N4 | module, 4 MB | ? | Extended (search snippet) | candidate |
-| LDO | U2 | C6186 | AMS1117-3.3 | SOT-223 | ? | ? | candidate |
-| USB ESD | U4 | C7519 | ST USBLC6-2SC6 | SOT-23-6 | ? | Extended (search snippet) | candidate |
-| NPN | Q1 Q2 | C20526 | MMBT3904 | SOT-23 | ? | ? | candidate |
-| MOSFET | Q901 | C20917 | AO3400A | SOT-23 | ? | ? | candidate |
-| TVS | D1 | C113952 | SMAJ5.0A (MDD) | SMA, unidirectional | ? | ? | candidate: check it is not the CA (bidirectional) part |
-| Schottky | D901 | C8678 | SS34 | SMA | ? | ? | candidate |
-| PTC 1.1 A | F1 | C163516 | Littelfuse 1812L110PR | 1812, 1.1 A hold, 8 V | ? | ? | candidate: no 6 V 1.1 A 1812 part found, 8 V is fine |
-| PTC 0.5 A | F101–F801 | C883122 | BHFUSE BSMD1206-050-6V | 1206, 0.5 A hold, 6 V | ? | ? | candidate: LCSC listing, JLCPCB stock unknown |
-| 22 µF | C3 | C45783 | CL21A226MQQNNNE | 0805 | ? | ? | candidate |
-| 10 µF | C2 C6 | C15850 | CL21A106KAYNNNE | 0805 | ? | ? | candidate |
-| 1 µF | C7 | C28323 | CL21B105KBFNNNE | 0805 | ? | ? | candidate |
-| 100 nF | C5 C8 | C49678 | CC0805KRX7R9BB104 | 0805 | ? | ? | candidate |
-| 330 R | Rn01 (n=1–7) | C17630 | 0805W8F3300T5E | 0805 | ? | ? | candidate |
-| 1 k | R10 R11 Rn04 (n=1–6) | C17513 | 0805W8F1001T5E | 0805 | ? | ? | candidate |
-| 10 k | R1–R4 R704 | C17414 | 0805W8F1002T5E | 0805 | ? | ? | candidate |
-| 100 R | R801 R804 R901 | C17408 | 0805W8F1000T5E | 0805 | ? | ? | candidate |
-| 470 R | R5 | C17710 | 0805W8F4700T5E | 0805 | ? | ? | candidate |
-| 4.7 k | R802 R805 | C17673 | 0805W8F4701T5E | 0805 | ? | ? | candidate |
-| 22 k | R706 | C17560 | 0805W8F2202T5E | 0805 | ? | ? | candidate |
-| 100 k | R902 | C149504 | 0805W8F1003T5E | 0805 | ? | ? | candidate |
-| LED red | LED1 | C84256 | NationStar NCD0805R1 | 0805 | ? | Basic (search snippet) | candidate |
-| LED yellow | LED2 | C2296 | KENTO KT-0805Y | 0805 | ? | ? | candidate |
+| CH340C | U3 | C84681 | WCH CH340C | SOP-16 | 101,694 | Extended | **Checked 2026-11-05**, JLCPCB part API |
+| Module | U1 | C701341 | ESP32-WROOM-32E-N4 | module, 4 MB | 58,368 | Extended | **Checked 2026-11-05**, JLCPCB part API |
+| LDO | U2 | C6186 | AMS1117-3.3 | SOT-223 | 1,682,715 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| USB ESD | U4 | C7519 | ST USBLC6-2SC6 | SOT-23-6 | 40,517 | Extended | **Checked 2026-11-05**, JLCPCB part API |
+| NPN | Q1 Q2 | C20526 | MMBT3904 | SOT-23 | 2,813,293 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| MOSFET | Q901 | C20917 | AO3400A | SOT-23 | 943,596 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| TVS | D1 | C113952 | SMAJ5.0A (MDD) | SMA, unidirectional | 471,724 | Extended | **Checked 2026-11-05**, JLCPCB part API; unidirectional confirmed |
+| Schottky | D901 | C8678 | SS34 | SMA | 3,113,062 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| PTC 1.1 A | F1 | C163516 | Littelfuse 1812L110PR | 1812, 1.1 A hold, 8 V | 1,581 | Extended | **Checked 2026-11-05**, JLCPCB part API; no 6 V 1.1 A 1812 part found, 8 V is fine |
+| PTC 0.5 A | F101–F801 | C883122 | BHFUSE BSMD1206-050-6V | 1206, 0.5 A hold, 6 V | 44,687 | Extended | **Checked 2026-11-05**, JLCPCB part API |
+| 22 µF | C3 | C45783 | CL21A226MAQNNNE | 0805 | 3,564,448 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 10 µF | C2 C6 | C15850 | CL21A106KAYNNNE | 0805 | 7,629,648 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 1 µF | C7 | C28323 | CL21B105KBFNNNE | 0805 | 2,635,400 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 100 nF | C5 C8 | C49678 | CC0805KRX7R9BB104 | 0805 | 27,583,501 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 330 R | Rn01 (n=1–7) | C17630 | 0805W8F3300T5E | 0805 | 1,714,616 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 1 k | R10 R11 Rn04 (n=1–6) | C17513 | 0805W8F1001T5E | 0805 | 41,293,140 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 10 k | R1–R4 R704 | C17414 | 0805W8F1002T5E | 0805 | 50,802,388 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 100 R | R801 R804 R901 | C17408 | 0805W8F1000T5E | 0805 | 7,399,198 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 470 R | R5 | C17710 | 0805W8F4700T5E | 0805 | 2,012,661 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 4.7 k | R802 R805 | C17673 | 0805W8F4701T5E | 0805 | 3,918,326 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 22 k | R706 | C17560 | 0805W8F2202T5E | 0805 | 1,365,828 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| 100 k | R902 | C149504 | 0805W8F1003T5E | 0805 | 2,821,069 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| LED red | LED1 | C84256 | NationStar NCD0805R1 | 0805 | 2,211,266 | Basic | **Checked 2026-11-05**, JLCPCB part API |
+| LED yellow | LED2 | C2296 | KENTO KT-0805Y | 0805 | 590,738 | Basic | **Checked 2026-11-05**, JLCPCB part API |
 
-Every SMD line has a candidate. None is known to be unavailable.
+The 1.1 A PTC (F1) has the lowest stock, which is fine for small batches. Recheck it before a large order.
 
-**To finish the check**, run this from a machine that can reach `cart.jlcpcb.com`:
+**To recheck stock**, run this from a machine that can reach `cart.jlcpcb.com`:
 
 ```bash
 python3 hardware/tools/pcba.py --verify production/pcba
