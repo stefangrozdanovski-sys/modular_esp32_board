@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modular Base Parts</title>
+<style>
+/* Layout: workbench sheet - one dense stock table per section, shopping list as a printable A4 page. */
+:root {
+  --paper: #f5f5f0; --card: #ffffff; --ink: #1c242b; --muted: #5f6b73; --line: #d9dcd4; --line-soft: #e9ebe4;
+  --accent: #a8561f; --accent-soft: #f6e6da; --mask: #1f5b3e;
+  --ok: #2c7a4b; --ok-soft: #e1f1e6; --warn: #a66a00; --warn-soft: #fbefd5; --bad: #b3352b; --bad-soft: #f8e1de;
+  --input: #ffffff; --focus: #1f6fd1;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14191d; --card: #1c2328; --ink: #e6e9e4; --muted: #9aa5ab; --line: #2f3a40; --line-soft: #263036;
+    --accent: #e08a4e; --accent-soft: #3a2a1f; --mask: #3f9a6a;
+    --ok: #5cc184; --ok-soft: #1d3326; --warn: #e3ae4b; --warn-soft: #3a2f17; --bad: #ef7d72; --bad-soft: #3b201d;
+    --input: #11171a; --focus: #6aa7ff; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14191d; --card: #1c2328; --ink: #e6e9e4; --muted: #9aa5ab; --line: #2f3a40; --line-soft: #263036;
+  --accent: #e08a4e; --accent-soft: #3a2a1f; --mask: #3f9a6a;
+  --ok: #5cc184; --ok-soft: #1d3326; --warn: #e3ae4b; --warn-soft: #3a2f17; --bad: #ef7d72; --bad-soft: #3b201d;
+  --input: #11171a; --focus: #6aa7ff; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 14px/1.4 var(--sans); }
+.wrap { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 16px 48px; }
+header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between;
+  border-bottom: 2px solid var(--ink); padding-bottom: 12px; }
+.brand h1 { margin: 0; font-size: 22px; letter-spacing: .01em; text-wrap: balance; }
+.brand p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.brand .tag { font: 600 11px var(--mono); color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+.boards { display: flex; align-items: center; gap: 8px; }
+.boards label { font-weight: 600; }
+.stepper { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--input); }
+.stepper button { border: 0; background: transparent; color: var(--ink); width: 34px; font-size: 18px; cursor: pointer; }
+.stepper button:hover { background: var(--line-soft); }
+.stepper input { width: 56px; border: 0; border-inline: 1px solid var(--line); text-align: center; font: 600 16px var(--mono); }
+input, select, textarea { font: inherit; color: var(--ink); background: var(--input); border: 1px solid var(--line); border-radius: 5px; }
+input:focus-visible, select:focus-visible, button:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.tabs { display: flex; gap: 4px; margin-top: 16px; border-bottom: 1px solid var(--line); }
+.tabs button { border: 1px solid transparent; border-bottom: 0; background: none; color: var(--muted); padding: 8px 14px;
+  font: 600 14px var(--sans); cursor: pointer; border-radius: 6px 6px 0 0; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { background: var(--card); color: var(--ink); border-color: var(--line); }
+.tabs .count { font: 600 12px var(--mono); background: var(--accent); color: #fff; border-radius: 10px; padding: 1px 7px; margin-left: 6px; }
+.panel { background: var(--card); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 8px 8px; padding: 16px; }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.tile { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+.tile .k { font-size: 12px; color: var(--muted); }
+.tile .v { font: 600 22px var(--mono); font-variant-numeric: tabular-nums; }
+.tile.ok .v { color: var(--ok); } .tile.bad .v { color: var(--bad); } .tile.acc .v { color: var(--accent); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.toolbar input[type=search] { flex: 1 1 220px; min-width: 0; padding: 7px 10px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; background: var(--input); color: var(--ink); padding: 7px 11px; cursor: pointer; font: 13px var(--sans); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.btn { border: 1px solid var(--line); background: var(--input); color: var(--ink); padding: 7px 12px; border-radius: 6px;
+  cursor: pointer; font: 13px var(--sans); }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.btn.ghost { background: transparent; }
+.spacer { flex: 1; }
+section.sec { margin-top: 18px; }
+section.sec h2 { font-size: 15px; margin: 0 0 6px; display: flex; gap: 10px; align-items: baseline; }
+section.sec h2 small { font-weight: 400; color: var(--muted); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+table.stock { width: 100%; border-collapse: collapse; min-width: 1060px; }
+table.stock th { text-align: left; font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: .05em;
+  color: var(--muted); background: var(--line-soft); padding: 7px 8px; position: sticky; top: 0; }
+table.stock td { padding: 7px 8px; border-top: 1px solid var(--line-soft); vertical-align: top; }
+table.stock tr.state-ok td:first-child { box-shadow: inset 3px 0 var(--ok); }
+table.stock tr.state-part td:first-child { box-shadow: inset 3px 0 var(--warn); }
+table.stock tr.state-miss td:first-child { box-shadow: inset 3px 0 var(--bad); }
+td.part b { font-size: 14px; }
+td.part .pkg { color: var(--muted); font-size: 12px; }
+td.part .refs { font: 11px var(--mono); color: var(--muted); margin-top: 2px; word-break: break-word; }
+td.spec { font-size: 13px; max-width: 320px; }
+td.spec .subs { color: var(--muted); font-size: 12px; margin-top: 2px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td .calc { font: 600 15px var(--mono); }
+td .why { font: 11px var(--mono); color: var(--muted); white-space: nowrap; }
+input.qty { width: 74px; text-align: right; padding: 5px 6px; font: 14px var(--mono); }
+input.qty.override { border-color: var(--accent); background: var(--accent-soft); }
+input.price { width: 76px; text-align: right; padding: 5px 6px; font: 14px var(--mono); }
+select.shop { padding: 5px 6px; max-width: 128px; }
+input[type=checkbox].buy { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; }
+.pill { display: inline-block; font: 600 11px var(--sans); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.part { background: var(--warn-soft); color: var(--warn); }
+.pill.miss { background: var(--bad-soft); color: var(--bad); }
+.hint { color: var(--muted); font-size: 12px; }
+.empty { padding: 18px; color: var(--muted); text-align: center; }
+footer.foot { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+footer.foot .hint { flex: 1 1 260px; }
+
+/* ---------- shopping list (screen preview = print page) ---------- */
+.sheet { background: #fff; color: #111; max-width: 210mm; margin: 0 auto; padding: 12mm; border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08); font: 10pt/1.35 var(--sans); }
+.sheet h1 { font-size: 15pt; margin: 0; }
+.sheet .meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 9pt; color: #444; margin: 3px 0 10px; border-bottom: 1.5px solid #111; padding-bottom: 6px; }
+.sheet h2 { font-size: 11.5pt; margin: 12px 0 4px; display: flex; justify-content: space-between; gap: 8px;
+  border-bottom: 1px solid #111; padding-bottom: 2px; break-after: avoid; }
+.sheet h2 span { font-weight: 400; font-size: 9pt; color: #444; }
+.sheet table { width: 100%; border-collapse: collapse; }
+.sheet th { text-align: left; font-size: 8pt; text-transform: uppercase; letter-spacing: .04em; color: #555; padding: 3px 4px; border-bottom: 1px solid #999; }
+.sheet td { padding: 4px; border-bottom: 1px solid #ddd; vertical-align: top; }
+.sheet tr { break-inside: avoid; }
+.sheet .box { width: 4.2mm; height: 4.2mm; border: 1.2px solid #111; border-radius: 1px; display: inline-block; }
+.sheet .qty { font: 700 11pt var(--mono); text-align: right; white-space: nowrap; }
+.sheet .q2 { font-size: 8pt; color: #555; font-weight: 400; display: block; }
+.sheet .sub { font-size: 8.5pt; color: #444; }
+.sheet .srch { font: 8pt var(--mono); color: #333; }
+.sheet .tot { text-align: right; font-size: 9pt; margin-top: 3px; }
+.sheet .note { font-size: 8.5pt; color: #444; margin-top: 2px; }
+.sheet .notes { margin-top: 14px; font-size: 9pt; }
+.sheet .notes .lines { border-top: 1px solid #bbb; height: 7mm; }
+.sheet .nothing { padding: 16mm 0; text-align: center; color: #666; }
+.previewbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.previewbar label { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; }
+
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: no-preference) { .btn, .seg button { transition: background .12s, border-color .12s; } }
+
+@media print {
+  @page { size: A4 portrait; margin: 11mm 11mm 12mm; }
+  body { background: #fff; color: #111; }
+  .wrap { max-width: none; padding: 0; }
+  header.top, .tabs, #stockPanel, .previewbar, footer.foot { display: none !important; }
+  #listPanel { display: block !important; border: 0; padding: 0; background: none; }
+  .sheet { border: 0; box-shadow: none; padding: 0; max-width: none; }
+  .sheet .notes textarea { display: none; }
+}
+@media (max-width: 640px) {
+  .brand h1 { font-size: 19px; }
+  .sheet { padding: 6mm; font-size: 9pt; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="tag">Bill of materials &middot; procurement</div>
+      <h1 id="title">Modular Base Parts</h1>
+      <p id="subtitle"></p>
+    </div>
+    <div class="boards">
+      <label for="boards">Boards to build</label>
+      <span class="stepper">
+        <button type="button" id="bMinus" aria-label="One board fewer">&minus;</button>
+        <input id="boards" type="number" min="1" max="100" step="1" inputmode="numeric">
+        <button type="button" id="bPlus" aria-label="One board more">+</button>
+      </span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tabStock" aria-selected="true" aria-controls="stockPanel">Stock</button>
+    <button role="tab" id="tabList" aria-selected="false" aria-controls="listPanel">Shopping list<span class="count" id="listCount">0</span></button>
+  </nav>
+
+  <div class="panel" id="stockPanel" role="tabpanel">
+    <div class="summary">
+      <div class="tile"><div class="k">Part lines</div><div class="v" id="sLines">0</div></div>
+      <div class="tile ok"><div class="k">Fully stocked</div><div class="v" id="sOk">0</div></div>
+      <div class="tile bad"><div class="k">Need buying</div><div class="v" id="sNeed">0</div></div>
+      <div class="tile acc"><div class="k">On the shopping list</div><div class="v" id="sChecked">0</div></div>
+      <div class="tile"><div class="k">Estimated cost (priced lines)</div><div class="v" id="sCost">&ndash;</div></div>
+    </div>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search part, value, reference or note" aria-label="Search parts">
+      <div class="seg" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="need" aria-pressed="false">Need buying</button>
+        <button type="button" data-f="ok" aria-pressed="false">Stocked</button>
+        <button type="button" data-f="checked" aria-pressed="false">On list</button>
+      </div>
+      <span class="spacer"></span>
+      <button type="button" class="btn" id="checkNeed">Put everything short on the list</button>
+      <button type="button" class="btn ghost" id="uncheckAll">Clear the list</button>
+    </div>
+    <div id="sections"></div>
+    <footer class="foot">
+      <span class="hint">Saved automatically in this browser. Use Export to keep a copy or move it to another computer.</span>
+      <button type="button" class="btn" id="exportJson">Export backup</button>
+      <button type="button" class="btn" id="importJson">Import backup</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <button type="button" class="btn" id="exportCsv">Export list as CSV</button>
+      <button type="button" class="btn ghost" id="reset">Reset all</button>
+    </footer>
+  </div>
+
+  <div class="panel" id="listPanel" role="tabpanel" hidden>
+    <div class="previewbar">
+      <label><input type="checkbox" id="optSearch" checked> AliExpress search terms</label>
+      <label><input type="checkbox" id="optSubs" checked> Substitutes</label>
+      <label><input type="checkbox" id="optPrice" checked> Prices</label>
+      <span class="spacer" style="flex:1"></span>
+      <button type="button" class="btn primary" id="printBtn">Print A4 list</button>
+    </div>
+    <div class="sheet" id="sheet"></div>
+  </div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const KEY = 'esp32-modular-v2-bom-app';
+const SHOPS = ['Local store', 'AliExpress', 'PCB maker', 'Other'];
+const SECTIONS = [
+  ['pcb', 'Parts on the PCB', 'Quantity per board x boards to build + spares'],
+  ['option', 'Option parts for the drawer', 'For configuring ports later; fixed drawer quantity'],
+  ['offboard', 'Off-board', 'Connectors to crimp, cables, standoffs, the PCB itself'],
+];
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const eur = n => '€' + n.toFixed(2);
+
+// ---------- state ----------
+function blankState() {
+  const items = {};
+  for (const it of DATA.items) {
+    items[it.id] = { stock: it.stock ?? null, buy: null, need: null, check: null, shop: it.shop, price: null };
+  }
+  return { boards: DATA.boardsDefault, items, view: 'stock', filter: 'all', opts: { search: true, subs: true, price: true }, notes: '' };
+}
+let S = blankState();
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) {
+    const saved = JSON.parse(raw);
+    S = Object.assign(blankState(), saved);
+    for (const it of DATA.items) S.items[it.id] = Object.assign(blankState().items[it.id], saved.items?.[it.id] || {});
+  }
+} catch (e) { /* storage unavailable: start fresh */ }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+// ---------- calculations ----------
+function needOf(it) {
+  const st = S.items[it.id];
+  if (it.basis === 'drawer') return st.need ?? it.perBoard;
+  if (it.basis === 'oneoff') return it.perBoard;
+  return it.perBoard > 0 ? it.perBoard * S.boards + it.spares : 0;
+}
+function calc(it) {
+  const st = S.items[it.id];
+  const need = needOf(it);
+  const stock = Number(st.stock) || 0;
+  const short = Math.max(0, need - stock);
+  const buy = st.buy ?? short;
+  const state = need === 0 || stock >= need ? 'ok' : stock > 0 ? 'part' : 'miss';
+  const checked = st.check ?? short > 0;          // untouched lines follow the shortage
+  return { need, stock, short, buy, state, checked, price: st.price, shop: st.shop };
+}
+function why(it) {
+  if (it.basis === 'drawer') return 'drawer';
+  if (it.basis === 'oneoff') return 'one-off';
+  return `${it.perBoard}×${S.boards}${it.spares ? ' + ' + it.spares : ''}`;
+}
+
+// ---------- stock table ----------
+function rowHtml(it) {
+  const c = calc(it), st = S.items[it.id];
+  const pill = c.state === 'ok' ? '<span class="pill ok">Stocked</span>'
+    : c.state === 'part' ? '<span class="pill part">Short ' + c.short + '</span>' : '<span class="pill miss">None in stock</span>';
+  const shopOpts = SHOPS.map(s => `<option${s === c.shop ? ' selected' : ''}>${s}</option>`).join('');
+  const needCell = it.basis === 'drawer'
+    ? `<input class="qty${st.need != null ? ' override' : ''}" type="number" min="0" step="1" data-k="need" value="${c.need}" aria-label="Drawer quantity for ${esc(it.name)}">`
+    : `<span class="calc">${c.need}</span>`;
+  return `<tr class="state-${c.state}" data-id="${it.id}">
+    <td><input class="buy" type="checkbox" data-k="check" ${c.checked ? 'checked' : ''} aria-label="Put ${esc(it.name)} on the shopping list"></td>
+    <td class="part"><b>${esc(it.name)}</b>${it.pkg ? `<div class="pkg">${esc(it.pkg)}</div>` : ''}${it.refs ? `<div class="refs">${esc(it.refs)}</div>` : ''}</td>
+    <td class="spec">${esc(it.spec)}${it.subs ? `<div class="subs">Alt: ${esc(it.subs)}</div>` : ''}${it.note ? `<div class="subs">${esc(it.note)}</div>` : ''}</td>
+    <td class="num">${needCell}<div class="why">${why(it)}</div></td>
+    <td class="num"><input class="qty" type="number" min="0" step="1" data-k="stock" value="${st.stock ?? ''}" placeholder="0" aria-label="In stock: ${esc(it.name)}"></td>
+    <td class="num"><input class="qty${st.buy != null ? ' override' : ''}" type="number" min="0" step="1" data-k="buy" value="${st.buy ?? ''}" placeholder="${c.short}" aria-label="Quantity to buy: ${esc(it.name)}">${it.pack ? `<div class="why">pack ${esc(it.pack)}</div>` : ''}</td>
+    <td>${pill}</td>
+    <td><select class="shop" data-k="shop" aria-label="Shop for ${esc(it.name)}">${shopOpts}</select></td>
+    <td class="num"><input class="price" type="number" min="0" step="0.01" data-k="price" value="${st.price ?? ''}" placeholder="&euro;" aria-label="Unit price in euro: ${esc(it.name)}"></td>
+  </tr>`;
+}
+function visible(it) {
+  const c = calc(it);
+  if (S.filter === 'need' && c.short === 0) return false;
+  if (S.filter === 'ok' && c.state !== 'ok') return false;
+  if (S.filter === 'checked' && !(c.checked && c.buy > 0)) return false;
+  const q = $('#q').value.trim().toLowerCase();
+  if (!q) return true;
+  return [it.name, it.pkg, it.spec, it.refs, it.subs, it.note, it.ali].join(' ').toLowerCase().includes(q);
+}
+function renderStock() {
+  let html = '';
+  for (const [sec, title, sub] of SECTIONS) {
+    const rows = DATA.items.filter(it => it.section === sec && visible(it));
+    html += `<section class="sec"><h2>${title} <small>${sub}</small></h2><div class="tablewrap"><table class="stock">
+      <thead><tr><th title="On the shopping list">List</th><th>Part</th><th>What to look for</th><th class="num">Need</th>
+      <th class="num">In stock</th><th class="num">To buy</th><th>Status</th><th>Shop</th><th class="num">Unit &euro;</th></tr></thead><tbody>
+      ${rows.length ? rows.map(rowHtml).join('') : '<tr><td colspan="9" class="empty">Nothing matches this filter.</td></tr>'}
+      </tbody></table></div></section>`;
+  }
+  $('#sections').innerHTML = html;
+}
+function renderSummary() {
+  let ok = 0, need = 0, listed = 0, cost = 0, priced = 0;
+  for (const it of DATA.items) {
+    const c = calc(it);
+    if (c.state === 'ok') ok++; else need++;
+    if (c.checked && c.buy > 0) { listed++; if (c.price) { cost += c.buy * c.price; priced++; } }
+  }
+  $('#sLines').textContent = DATA.items.length;
+  $('#sOk').textContent = ok; $('#sNeed').textContent = need; $('#sChecked').textContent = listed;
+  $('#sCost').textContent = priced ? eur(cost) : '–';
+  $('#listCount').textContent = listed;
+}
+
+// ---------- shopping list ----------
+function renderSheet() {
+  const d = new Date(), today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const lines = DATA.items.map(it => ({ it, c: calc(it) })).filter(x => x.c.checked && x.c.buy > 0);
+  let h = `<h1>Shopping list &middot; ${esc(DATA.project)} v${esc(DATA.rev)}</h1>
+    <div class="meta"><span>Date ${today}</span><span>Boards to build: <b>${S.boards}</b></span><span>${lines.length} lines</span></div>`;
+  if (!lines.length) {
+    h += '<div class="nothing">Nothing on the list yet. Tick parts on the Stock tab, or use "Put everything short on the list".</div>';
+  }
+  const order = [...SHOPS];
+  for (const shop of order) {
+    const g = lines.filter(x => x.c.shop === shop);
+    if (!g.length) continue;
+    let tot = 0, priced = 0;
+    g.forEach(x => { if (x.c.price) { tot += x.c.buy * x.c.price; priced++; } });
+    h += `<h2>${shop}<span>${g.length} line${g.length > 1 ? 's' : ''}${S.opts.price && priced ? ' &middot; ' + eur(tot) + (priced < g.length ? ' (priced lines)' : '') : ''}</span></h2>
+      <table><thead><tr><th style="width:6mm"></th><th>Part</th><th>Package &middot; what to look for</th><th style="text-align:right">Qty</th>
+      ${S.opts.price ? '<th style="text-align:right">&euro;</th>' : ''}</tr></thead><tbody>`;
+    for (const { it, c } of g) {
+      const extra = [];
+      if (S.opts.subs && it.subs) extra.push('Alt: ' + esc(it.subs));
+      if (shop === 'AliExpress' && S.opts.search && it.ali) extra.push(`<span class="srch">${esc(it.ali)}</span>`);
+      h += `<tr><td><span class="box"></span></td>
+        <td><b>${esc(it.name)}</b>${it.refs ? `<div class="sub">${esc(it.refs)}</div>` : ''}</td>
+        <td>${it.pkg ? esc(it.pkg) + ' &middot; ' : ''}${esc(it.spec)}${extra.length ? `<div class="sub">${extra.join(' &middot; ')}</div>` : ''}</td>
+        <td class="qty">${c.buy}<span class="q2">need ${c.need}, have ${c.stock}</span></td>
+        ${S.opts.price ? `<td class="qty" style="font-weight:400;font-size:9pt">${c.price ? eur(c.buy * c.price) : ''}</td>` : ''}</tr>`;
+    }
+    h += '</tbody></table>';
+    if (shop === 'AliExpress' && S.opts.price && priced) {
+      h += `<div class="note">Imports into North Macedonia up to &euro;22 including shipping are VAT-free; &euro;22&ndash;90 adds 18% VAT (rules as of 2026-10).</div>`;
+    }
+  }
+  h += `<div class="notes"><b>Notes</b><div class="lines"></div><div class="lines"></div><div class="lines"></div></div>`;
+  $('#sheet').innerHTML = h;
+}
+
+function renderAll() {
+  $('#boards').value = S.boards;
+  $('#subtitle').textContent = `${DATA.project} v${DATA.rev} · ${DATA.items.length} part lines · shopping list prints on A4`;
+  document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === S.filter)));
+  ['search', 'subs', 'price'].forEach(k => { $('#opt' + k[0].toUpperCase() + k.slice(1)).checked = S.opts[k]; });
+  showTab(S.view, false);
+  renderStock(); renderSummary(); renderSheet();
+}
+function showTab(v, store = true) {
+  S.view = v;
+  $('#tabStock').setAttribute('aria-selected', String(v === 'stock'));
+  $('#tabList').setAttribute('aria-selected', String(v === 'list'));
+  $('#stockPanel').hidden = v !== 'stock';
+  $('#listPanel').hidden = v !== 'list';
+  if (v === 'list') renderSheet();
+  if (store) save();
+}
+
+// ---------- events ----------
+$('#sections').addEventListener('change', e => {
+  const tr = e.target.closest('tr[data-id]'); if (!tr) return;
+  const st = S.items[tr.dataset.id], k = e.target.dataset.k;
+  if (k === 'check') st.check = e.target.checked;
+  else if (k === 'shop') st.shop = e.target.value;
+  else {
+    const raw = e.target.value.trim();
+    st[k] = raw === '' ? null : Math.max(0, Number(raw));
+  }
+  save();
+  const it = DATA.items.find(x => x.id === tr.dataset.id);
+  const focusK = e.target.dataset.k;
+  tr.outerHTML = rowHtml(it);
+  renderSummary();
+  const nt = document.querySelector(`tr[data-id="${it.id}"] [data-k="${focusK}"]`);
+  if (nt && focusK !== 'check' && document.activeElement === document.body) nt.focus();
+});
+$('#q').addEventListener('input', renderStock);
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { S.filter = b.dataset.f; save(); renderAll(); }));
+function setBoards(n) { S.boards = Math.min(100, Math.max(1, Math.round(n) || 1)); save(); renderAll(); }
+$('#boards').addEventListener('change', e => setBoards(Number(e.target.value)));
+$('#bMinus').addEventListener('click', () => setBoards(S.boards - 1));
+$('#bPlus').addEventListener('click', () => setBoards(S.boards + 1));
+$('#tabStock').addEventListener('click', () => showTab('stock'));
+$('#tabList').addEventListener('click', () => showTab('list'));
+$('#checkNeed').addEventListener('click', () => {
+  for (const it of DATA.items) { const c = calc(it); S.items[it.id].check = c.buy > 0 && c.short > 0 ? true : S.items[it.id].check; }
+  save(); renderAll();
+});
+$('#uncheckAll').addEventListener('click', () => { for (const id in S.items) S.items[id].check = false; save(); renderAll(); });
+['search', 'subs', 'price'].forEach(k => $('#opt' + k[0].toUpperCase() + k.slice(1)).addEventListener('change', e => { S.opts[k] = e.target.checked; save(); renderSheet(); }));
+$('#printBtn').addEventListener('click', () => { renderSheet(); window.print(); });
+window.addEventListener('beforeprint', renderSheet);
+
+function download(name, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type }));
+  a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+$('#exportJson').addEventListener('click', () => download(`modular-base-stock-${Date.now()}.json`, JSON.stringify(S, null, 1), 'application/json'));
+$('#importJson').addEventListener('click', () => $('#importFile').click());
+$('#importFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const saved = JSON.parse(await f.text());
+    if (!saved.items) throw new Error('not a backup file');
+    const fresh = blankState();
+    S = Object.assign(fresh, saved);
+    for (const it of DATA.items) S.items[it.id] = Object.assign(blankState().items[it.id], saved.items[it.id] || {});
+    save(); renderAll();
+  } catch (err) { $('#importJson').textContent = 'Import failed: not a backup file'; setTimeout(() => $('#importJson').textContent = 'Import backup', 3000); }
+  e.target.value = '';
+});
+$('#exportCsv').addEventListener('click', () => {
+  const rows = [['Shop', 'Part', 'Package', 'What to look for', 'Qty to buy', 'Need', 'In stock', 'Unit EUR', 'AliExpress search', 'Substitutes', 'References']];
+  for (const it of DATA.items) {
+    const c = calc(it);
+    if (c.checked && c.buy > 0) rows.push([c.shop, it.name, it.pkg, it.spec, c.buy, c.need, c.stock, c.price ?? '', it.ali, it.subs, it.refs]);
+  }
+  download('modular-base-shopping-list.csv', rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n'), 'text/csv');
+});
+let resetArmed = false;
+$('#reset').addEventListener('click', e => {
+  if (!resetArmed) { resetArmed = true; e.target.textContent = 'Click again to clear all stock, prices and ticks'; setTimeout(() => { resetArmed = false; e.target.textContent = 'Reset all'; }, 4000); return; }
+  S = blankState(); save(); resetArmed = false; e.target.textContent = 'Reset all'; renderAll();
+});
+
+renderAll();
+</script>
+</body>
+</html>

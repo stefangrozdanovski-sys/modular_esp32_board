@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "esp32-modular")(type "KiCad")(uri "${KIPRJMOD}/esp32-modular.pretty")(options "")(descr "Project footprints"))
+)

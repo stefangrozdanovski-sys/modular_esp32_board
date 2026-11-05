@@ -1,0 +1,33 @@
+# ESPHome
+secrets.yaml
+.esphome/
+**/.esphome/
+
+# KiCad local/user state and backups
+*.kicad_prl
+*-backups/
+*.lck
+fp-info-cache
+_autosave-*
+*.bak
+
+# Generator intermediates (see hardware/README.md "Rebuilding")
+hardware/net.net
+hardware/placed.kicad_pcb
+hardware/silk.kicad_pcb
+hardware/routed.kicad_pcb
+hardware/fin.kicad_pcb
+hardware/drc.txt
+hardware/tools/freerouting.jar
+hardware/tools/board.dsn
+hardware/tools/board.ses
+hardware/tools/fr.log
+
+# Python / OS
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+desktop.ini
