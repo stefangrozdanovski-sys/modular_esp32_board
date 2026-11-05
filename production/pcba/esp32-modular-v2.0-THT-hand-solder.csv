@@ -1,0 +1,5 @@
+Qty,Designator,Part,Package,Note
+2,"C1,C4",100 uF 10 V,"Radial 6.3 mm, 2.5 mm pitch","Hand-solder after assembly, or order JLCPCB THT assembly (see README)."
+9,"J1,J101,J201,J301,J401,J501,J601,J701,J801","XH 4P socket, vertical","JST XH B4B-XH-A, 2.50 mm","Hand-solder after assembly, or order JLCPCB THT assembly (see README)."
+1,J901,"XH 3P socket, vertical","JST XH B3B-XH-A, 2.50 mm","Hand-solder after assembly, or order JLCPCB THT assembly (see README)."
+2,"SW1,SW2",Tactile switch,"6 x 6 mm THT, 4 pins","Hand-solder after assembly, or order JLCPCB THT assembly (see README)."
