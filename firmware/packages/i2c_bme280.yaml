@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# BME280 temperature / humidity / pressure on the I2C port.
+# Needs: packages/i2c.yaml included once (bus id i2c_bus).
+# Pins:  I2C port only (SDA ${i2c_sda}, SCL ${i2c_scl}). VP 3V3.
+# Fit:   defaults.
+# Vars:  id, name (prefix for the entities)
+#        address          0x76 (default), 0x77 if SDO is high. Two BME280s on
+#                         one bus need different addresses.
+#        update_interval  60s (default)
+#
+#   i2c: !include ../packages/i2c.yaml
+#   climate: !include
+#     file: ../packages/i2c_bme280.yaml
+#     vars: {id: climate, name: Greenhouse}
+
+defaults:
+  address: "0x76"
+  update_interval: 60s
+
+sensor:
+  - platform: bme280_i2c
+    id: ${id}
+    i2c_id: i2c_bus
+    address: ${address}
+    update_interval: ${update_interval}
+    temperature:
+      id: ${id}_temperature
+      name: ${name} temperature
+    humidity:
+      id: ${id}_humidity
+      name: ${name} humidity
+    pressure:
+      id: ${id}_pressure
+      name: ${name} pressure

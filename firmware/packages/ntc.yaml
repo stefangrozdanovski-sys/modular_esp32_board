@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# NTC 10k B3950 thermistor between port B and GND.
+# Pins:  B (P1-P6: ${p1_b} ... ${p6_b}), all are ADC1.
+# Fit:   RBU 10k 1 % (pull-up to 3V3), CB 100nF. RB 1k stays fitted.
+# Vars:  id, name, pin
+#        b_constant       3950 (default)
+#        update_interval  60s (default)
+# Chain: adc (12db) -> resistance (DOWNSTREAM, 10k, 3.3 V) -> ntc.
+# Helper sensors ${id}_v and ${id}_r are internal.
+#
+#   ntc_p2: !include
+#     file: ../packages/ntc.yaml
+#     vars: {id: ntc_p2, name: Tank temperature, pin: "${p2_b}"}
+
+defaults:
+  b_constant: "3950"
+  update_interval: 60s
+
+sensor:
+  - platform: adc
+    id: ${id}_v
+    pin: "${pin}"
+    attenuation: 12db
+    update_interval: ${update_interval}
+    internal: true
+  - platform: resistance
+    id: ${id}_r
+    sensor: ${id}_v
+    configuration: DOWNSTREAM
+    resistor: 10kOhm
+    reference_voltage: 3.3V
+    internal: true
+  - platform: ntc
+    id: ${id}
+    name: ${name}
+    sensor: ${id}_r
+    calibration:
+      b_constant: ${b_constant}
+      reference_temperature: 25°C
+      reference_resistance: 10kOhm

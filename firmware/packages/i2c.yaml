@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# I2C bus on the I2C port. Include ONCE per device, before any I2C sensor
+# package (i2c_bme280, ...). Sensors attach with i2c_id: i2c_bus.
+# Pins:  I2C port only (SDA ${i2c_sda}, SCL ${i2c_scl}). VP 3V3.
+# Fit:   defaults (4.7k pull-ups fitted, so the internal ones are off).
+#        Several modules can share the port with a splitter.
+# Vars:  frequency  100kHz (default). Long cables: keep 100kHz or lower.
+#        sda, scl   I2C pins (default ${i2c_sda}/${i2c_scl})
+# No id/name vars: the bus id is fixed (i2c_bus) so every I2C package finds it.
+#
+#   i2c: !include ../packages/i2c.yaml
+
+defaults:
+  frequency: 100kHz
+  sda: ${i2c_sda}
+  scl: ${i2c_scl}
+
+i2c:
+  - id: i2c_bus
+    sda: ${sda}
+    scl: ${scl}
+    frequency: ${frequency}
+    sda_pullup_enabled: false
+    scl_pullup_enabled: false
+    scan: true

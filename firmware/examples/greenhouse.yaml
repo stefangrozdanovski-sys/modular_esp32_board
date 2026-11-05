@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# Greenhouse: air climate, soil temperature, vent fan.
+#   I2C   BME280 (0x76)         defaults
+#   P4 A  DS18B20 probe         R402 = 4k7
+#   OUT   12/24 V DC fan, PWM   defaults; fan between V+ and OUT
+# Copy ../secrets.example.yaml to ../secrets.yaml first.
+
+substitutions:
+  device_name: greenhouse
+  friendly_name: Greenhouse
+
+packages:
+  base: !include ../base.yaml
+  i2c: !include ../packages/i2c.yaml
+  climate: !include
+    file: ../packages/i2c_bme280.yaml
+    vars: {id: climate, name: Air}
+  soil_p4: !include
+    file: ../packages/ds18b20.yaml
+    vars: {id: soil_p4, name: Soil temperature, pin: "${p4_a}"}
+  fan: !include
+    file: ../packages/out_pwm.yaml
+    vars: {id: vent_fan, name: Vent fan, min_power: "0.3"}

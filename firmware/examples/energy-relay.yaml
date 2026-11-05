@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# Energy meter + relay + tank temperature + water flow.
+#   UART  PZEM-004T v3          defaults, VP 5V
+#   P1 A  relay, low trigger    defaults (high trigger: R103 = 10k, inverted "false")
+#   P2 B  NTC 10k B3950         R205 = 10k 1 %, C201 = 100nF
+#   P3 B  5 V flow sensor       R304 = 10k (replaces 1k), R306 = 22k, C301 = 1nF, JP301 to 5V
+# Copy ../secrets.example.yaml to ../secrets.yaml first.
+
+substitutions:
+  device_name: energy-relay
+  friendly_name: Energy relay
+
+packages:
+  base: !include ../base.yaml
+  pzem: !include
+    file: ../packages/pzem.yaml
+    vars: {id: pzem, name: Mains}
+  relay_p1: !include
+    file: ../packages/relay.yaml
+    vars: {id: relay_p1, name: Relay, pin: "${p1_a}"}
+  ntc_p2: !include
+    file: ../packages/ntc.yaml
+    vars: {id: ntc_p2, name: Tank temperature, pin: "${p2_b}"}
+  flow_p3: !include
+    file: ../packages/pulse_flow.yaml
+    vars:
+      id: flow_p3
+      name: Water flow
+      pin: "${p3_b}"
+      pulses_per_litre: "450.0"  # PLACEHOLDER: set from the sensor datasheet

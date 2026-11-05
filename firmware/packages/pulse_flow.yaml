@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2026 stefangrozdanovski-sys
+# SPDX-License-Identifier: MIT
+#
+# Pulse flow sensor (water meter, YF-S201 style) -> L/min and total litres.
+# Pins:  5 V push-pull output: B on P3-P6 ONLY (${p3_b} ${p4_b} ${p5_b} ${p6_b}).
+#          Fit RB 10k (replace 1k), RBD 22k, CB 1nF, VP 5V.
+#        Open-collector output: A on any port (P1-P6), fit RAU 10k, VP 5V.
+#        NEVER P1 B (GPIO36) or P2 B (GPIO39): ESP32 errata, false edges with Wi-Fi.
+# Vars:  id, name, pin
+#        pulses_per_litre  PLACEHOLDER 450 (F = 7.5 x Q[L/min]). The sensor model is
+#                          not chosen yet: set it from the datasheet, then
+#                          calibrate with a bucket.
+#        update_interval   60s (default)
+# Total counts from boot; Home Assistant handles the reset (total_increasing).
+#
+#   flow_p3: !include
+#     file: ../packages/pulse_flow.yaml
+#     vars: {id: flow_p3, name: Water flow, pin: "${p3_b}", pulses_per_litre: "450.0"}
+
+defaults:
+  pulses_per_litre: "450.0"
+  update_interval: 60s
+
+sensor:
+  - platform: pulse_counter
+    id: ${id}
+    name: ${name}
+    pin:
+      number: ${pin}
+      mode:
+        input: true
+    count_mode:
+      rising_edge: INCREMENT
+      falling_edge: DISABLE
+    internal_filter: 13us
+    update_interval: ${update_interval}
+    unit_of_measurement: L/min
+    icon: mdi:water
+    accuracy_decimals: 2
+    state_class: measurement
+    filters:
+      - lambda: return x / ${pulses_per_litre};
+    total:
+      id: ${id}_total
+      name: ${name} total
+      unit_of_measurement: L
+      device_class: water
+      state_class: total_increasing
+      accuracy_decimals: 1
+      filters:
+        - lambda: return x / ${pulses_per_litre};
